@@ -32,6 +32,8 @@ public class Restaurant {
     @ManyToMany
     private Set<Category> categories = new HashSet<>();
 
+    public Restaurant() {}
+
     @Builder
     public Restaurant(String name, String description, String phone, double latitude,
                       double longitude, Schedule schedule, Set<Category> categories) {

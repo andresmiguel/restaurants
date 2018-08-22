@@ -1,6 +1,7 @@
 package com.py.restaurants;
 
 import com.py.restaurants.domain.Category;
+import com.py.restaurants.services.CategoryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
