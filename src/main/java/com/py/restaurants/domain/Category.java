@@ -1,5 +1,6 @@
 package com.py.restaurants.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,11 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categoryRangeGen")
     private Long id;
 
+    @Setter(AccessLevel.NONE)
     @Column(unique = true, nullable = false)
     private String name;
+
+    public Category(String name) {
+        this.name = name;
+    }
 }

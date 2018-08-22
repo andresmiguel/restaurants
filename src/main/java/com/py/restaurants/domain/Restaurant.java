@@ -1,6 +1,7 @@
 package com.py.restaurants.domain;
 
 import com.py.restaurants.domain.utils.Checker;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class Restaurant {
     @Id
     @SequenceGenerator(name = "restaurantRangeGen", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restaurantRangeGen")
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -27,7 +29,7 @@ public class Restaurant {
     private double longitude;
     @OneToOne
     private Schedule schedule;
-    @OneToMany
+    @ManyToMany
     private Set<Category> categories = new HashSet<>();
 
     @Builder
