@@ -1,7 +1,6 @@
 package com.py.restaurants.rest;
 
 import com.py.restaurants.domain.Category;
-import com.py.restaurants.domain.Restaurant;
 import com.py.restaurants.dto.CategoryDto;
 import com.py.restaurants.dto.RestaurantDto;
 import com.py.restaurants.dto.mappers.CategoryMapper;

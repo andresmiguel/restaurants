@@ -1,4 +1,4 @@
-package com.py.restaurants;
+package com.py.restaurants.services;
 
 import com.py.restaurants.domain.Category;
 import com.py.restaurants.services.CategoryRepository;
