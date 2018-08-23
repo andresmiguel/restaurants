@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -77,6 +78,7 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .stream()
                 .map(c -> c.id)
                 .map(categoryRepository::findOne)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         restaurant.getCategories().addAll(categories);
     }
