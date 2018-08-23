@@ -56,18 +56,18 @@ public class RestaurantRepositoryTests {
 
         Restaurant restaurant1 = Restaurant.builder()
                 .name("My restaurant")
-                .categories(new HashSet<>(Arrays.asList(category1, category2)))
                 .build();
+        restaurant1.getCategories().addAll(new HashSet<>(Arrays.asList(category1, category2)));
 
         Restaurant restaurant2 = Restaurant.builder()
                 .name("Another one")
-                .categories(new HashSet<>(Arrays.asList(category1, category3)))
                 .build();
+        restaurant2.getCategories().addAll(new HashSet<>(Arrays.asList(category1, category3)));
 
         Restaurant restaurant3 = Restaurant.builder()
                 .name("Yet another one")
-                .categories(new HashSet<>(Arrays.asList(category3)))
                 .build();
+        restaurant3.getCategories().addAll(new HashSet<>(Arrays.asList(category3)));
 
         testEntityManager.persist(restaurant1);
         testEntityManager.persist(restaurant2);

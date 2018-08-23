@@ -1,10 +1,7 @@
 package com.py.restaurants.domain;
 
 import com.py.restaurants.domain.utils.Checker;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -12,6 +9,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 public class Restaurant {
 
@@ -27,16 +25,14 @@ public class Restaurant {
     private String phone;
     private double latitude;
     private double longitude;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Schedule schedule;
     @ManyToMany
     private Set<Category> categories = new HashSet<>();
 
-    public Restaurant() {}
-
     @Builder
     public Restaurant(String name, String description, String phone, double latitude,
-                      double longitude, Schedule schedule, Set<Category> categories) {
+                      double longitude, Schedule schedule) {
         Checker.isNotBlank(name, "Invalid Restaurant name!");
         this.name = name;
         this.description = description;
@@ -44,6 +40,5 @@ public class Restaurant {
         this.latitude = latitude;
         this.longitude = longitude;
         this.schedule = schedule;
-        this.categories = categories;
     }
 }

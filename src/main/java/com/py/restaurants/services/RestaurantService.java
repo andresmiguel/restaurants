@@ -18,6 +18,7 @@ public interface RestaurantService {
     Restaurant update(Long id, RestaurantDto dto);
     void delete(Long id);
 
+    Category getCategory(Long id);
     Stream<Category> getAllCategories();
     Category addCategory(CategoryDto dto);
     Category updateCategory(Long id, CategoryDto dto) throws CategoryNotFoundException;

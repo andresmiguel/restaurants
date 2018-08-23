@@ -1,12 +1,15 @@
 package com.py.restaurants.domain;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 public class Schedule {
 
@@ -32,6 +35,7 @@ public class Schedule {
     })
     private TimeSlot weekendDays;
 
+    @Builder
     public Schedule(TimeSlot weekDays, TimeSlot weekendDays) {
         this.weekDays = weekDays;
         this.weekendDays = weekendDays;

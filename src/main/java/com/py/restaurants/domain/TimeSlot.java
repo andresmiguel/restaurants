@@ -3,10 +3,12 @@ package com.py.restaurants.domain;
 import com.py.restaurants.domain.utils.Checker;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 
 @Getter
+@NoArgsConstructor
 @Embeddable
 public class TimeSlot {
     private int openingHour;
