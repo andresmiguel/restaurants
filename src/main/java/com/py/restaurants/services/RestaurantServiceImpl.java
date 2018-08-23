@@ -9,11 +9,11 @@ import com.py.restaurants.dto.mappers.RestaurantMapper;
 import com.py.restaurants.exceptions.CategoryNotFoundException;
 import com.py.restaurants.exceptions.DuplicateCategoryNameException;
 import com.py.restaurants.exceptions.DuplicateRestaurantNameException;
+import com.py.restaurants.exceptions.RestaurantNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -34,8 +34,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Optional<Restaurant> get(Long id) {
-        return Optional.ofNullable(restaurantRepository.findOne(id));
+    public Restaurant get(Long id) throws RestaurantNotFoundException {
+        Restaurant restaurant = restaurantRepository.findOne(id);
+
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException(id);
+        }
+
+        return restaurant;
     }
 
     @Override
@@ -72,8 +78,13 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant update(Long id, RestaurantDto dto) throws DuplicateRestaurantNameException {
+    public Restaurant update(Long id, RestaurantDto dto) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findOne(id);
+
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException(id);
+        }
+
         RestaurantMapper.copyFromDto(restaurant, dto);
         restaurant.getCategories().clear();
         setRestaurantCategories(dto, restaurant);
@@ -92,8 +103,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void delete(Long id) {
-        restaurantRepository.delete(id);
+    public void delete(Long id) throws RestaurantNotFoundException {
+        try {
+            restaurantRepository.delete(id);
+        } catch (EmptyResultDataAccessException erda) {
+            throw new RestaurantNotFoundException(id);
+        }
     }
 
     @Override
@@ -122,7 +137,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Category updateCategory(Long id, CategoryDto dto) throws CategoryNotFoundException, DuplicateCategoryNameException {
+    public Category updateCategory(Long id, CategoryDto dto) throws CategoryNotFoundException {
         Category category = categoryRepository.findOne(id);
 
         if (category == null) {
@@ -135,7 +150,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void deleteCategory(Long id) {
-        categoryRepository.delete(id);
+    public void deleteCategory(Long id) throws CategoryNotFoundException {
+        try {
+            categoryRepository.delete(id);
+        } catch (EmptyResultDataAccessException erda) {
+            throw new CategoryNotFoundException(id);
+        }
     }
 }

@@ -34,10 +34,8 @@ public class RestaurantController {
     }
 
     @GetMapping("/{id}")
-    public RestaurantDto getRestaurant(@PathVariable Long id) {
-        return restaurantService.get(id)
-                .map(RestaurantMapper::toDto)
-                .orElseThrow(() -> new RestaurantNotFoundException(id));
+    public RestaurantDto getRestaurant(@PathVariable Long id) throws RestaurantNotFoundException {
+        return RestaurantMapper.toDto(restaurantService.get(id));
     }
 
     @PostMapping
@@ -46,8 +44,13 @@ public class RestaurantController {
     }
 
     @PutMapping("{id}")
-    public RestaurantDto updateRestaurant(@PathVariable Long id, @Valid @RequestBody RestaurantDto dto) throws DuplicateRestaurantNameException {
+    public RestaurantDto updateRestaurant(@PathVariable Long id, @Valid @RequestBody RestaurantDto dto) throws RestaurantNotFoundException {
         return RestaurantMapper.toDto(restaurantService.update(id, dto));
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteRestaurant(@PathVariable Long id) throws RestaurantNotFoundException {
+        restaurantService.delete(id);
     }
 
     @GetMapping("/categories")
@@ -69,8 +72,13 @@ public class RestaurantController {
     }
 
     @PutMapping("/categories/{id}")
-    public CategoryDto updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDto dto) throws CategoryNotFoundException, DuplicateCategoryNameException {
+    public CategoryDto updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDto dto) throws CategoryNotFoundException {
         Category category = restaurantService.updateCategory(id, dto);
         return CategoryMapper.toDto(category);
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public void deleteCategory(@PathVariable Long id) throws CategoryNotFoundException {
+        restaurantService.deleteCategory(id);
     }
 }
