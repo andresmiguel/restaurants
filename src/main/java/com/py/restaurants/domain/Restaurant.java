@@ -1,6 +1,5 @@
 package com.py.restaurants.domain;
 
-import com.py.restaurants.domain.utils.Checker;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,7 +32,6 @@ public class Restaurant {
     @Builder
     public Restaurant(String name, String description, String phone, double latitude,
                       double longitude, Schedule schedule) {
-        Checker.isNotBlank(name, "Invalid Restaurant name!");
         this.name = name;
         this.description = description;
         this.phone = phone;
