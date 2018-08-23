@@ -61,7 +61,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/categories/{id}")
-    public CategoryDto getCategory(@PathVariable Long id) {
+    public CategoryDto getCategory(@PathVariable Long id) throws CategoryNotFoundException {
         return CategoryMapper.toDto(restaurantService.getCategory(id));
     }
 

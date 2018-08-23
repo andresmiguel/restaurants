@@ -112,8 +112,14 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Category getCategory(Long id) {
-        return categoryRepository.findOne(id);
+    public Category getCategory(Long id) throws CategoryNotFoundException {
+        Category category = categoryRepository.findOne(id);
+
+        if (category == null) {
+            throw new CategoryNotFoundException(id);
+        }
+
+        return category;
     }
 
     @Override

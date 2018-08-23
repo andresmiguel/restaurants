@@ -20,7 +20,7 @@ public interface RestaurantService {
     Restaurant update(Long id, RestaurantDto dto) throws RestaurantNotFoundException;
     void delete(Long id) throws RestaurantNotFoundException;
 
-    Category getCategory(Long id);
+    Category getCategory(Long id) throws CategoryNotFoundException;
     Stream<Category> getAllCategories();
     Category addCategory(CategoryDto dto) throws DuplicateCategoryNameException;
     Category updateCategory(Long id, CategoryDto dto) throws CategoryNotFoundException;
