@@ -6,6 +6,8 @@ import com.py.restaurants.dto.RestaurantDto;
 import com.py.restaurants.dto.mappers.CategoryMapper;
 import com.py.restaurants.dto.mappers.RestaurantMapper;
 import com.py.restaurants.exceptions.CategoryNotFoundException;
+import com.py.restaurants.exceptions.DuplicateCategoryNameException;
+import com.py.restaurants.exceptions.DuplicateRestaurantNameException;
 import com.py.restaurants.exceptions.RestaurantNotFoundException;
 import com.py.restaurants.services.RestaurantService;
 import org.springframework.web.bind.annotation.*;
@@ -39,12 +41,12 @@ public class RestaurantController {
     }
 
     @PostMapping
-    public RestaurantDto createRestaurant(@Valid @RequestBody RestaurantDto dto) {
+    public RestaurantDto createRestaurant(@Valid @RequestBody RestaurantDto dto) throws DuplicateRestaurantNameException {
         return RestaurantMapper.toDto(restaurantService.add(dto));
     }
 
     @PutMapping("{id}")
-    public RestaurantDto updateRestaurant(@PathVariable Long id, @Valid @RequestBody RestaurantDto dto) {
+    public RestaurantDto updateRestaurant(@PathVariable Long id, @Valid @RequestBody RestaurantDto dto) throws DuplicateRestaurantNameException {
         return RestaurantMapper.toDto(restaurantService.update(id, dto));
     }
 
@@ -61,13 +63,13 @@ public class RestaurantController {
     }
 
     @PostMapping("/categories")
-    public CategoryDto createCategory(@Valid @RequestBody CategoryDto dto) {
+    public CategoryDto createCategory(@Valid @RequestBody CategoryDto dto) throws DuplicateCategoryNameException {
         Category category = restaurantService.addCategory(dto);
         return CategoryMapper.toDto(category);
     }
 
     @PutMapping("/categories/{id}")
-    public CategoryDto updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDto dto) throws CategoryNotFoundException {
+    public CategoryDto updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDto dto) throws CategoryNotFoundException, DuplicateCategoryNameException {
         Category category = restaurantService.updateCategory(id, dto);
         return CategoryMapper.toDto(category);
     }

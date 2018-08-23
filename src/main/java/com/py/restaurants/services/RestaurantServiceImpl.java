@@ -7,6 +7,9 @@ import com.py.restaurants.dto.RestaurantDto;
 import com.py.restaurants.dto.mappers.CategoryMapper;
 import com.py.restaurants.dto.mappers.RestaurantMapper;
 import com.py.restaurants.exceptions.CategoryNotFoundException;
+import com.py.restaurants.exceptions.DuplicateCategoryNameException;
+import com.py.restaurants.exceptions.DuplicateRestaurantNameException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -55,16 +58,21 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    @Transactional
-    public Restaurant add(RestaurantDto dto) {
+    public Restaurant add(RestaurantDto dto) throws DuplicateRestaurantNameException {
         Restaurant restaurant = RestaurantMapper.fromDto(dto);
         setRestaurantCategories(dto, restaurant);
 
-        return restaurantRepository.save(restaurant);
+        try {
+            restaurant = restaurantRepository.save(restaurant);
+        } catch (DataIntegrityViolationException div) {
+            throw new DuplicateRestaurantNameException();
+        }
+
+        return restaurant;
     }
 
     @Override
-    public Restaurant update(Long id, RestaurantDto dto) {
+    public Restaurant update(Long id, RestaurantDto dto) throws DuplicateRestaurantNameException {
         Restaurant restaurant = restaurantRepository.findOne(id);
         RestaurantMapper.copyFromDto(restaurant, dto);
         restaurant.getCategories().clear();
@@ -101,17 +109,26 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Category addCategory(CategoryDto dto) {
+    public Category addCategory(CategoryDto dto) throws DuplicateCategoryNameException {
+
         Category category = CategoryMapper.fromDto(dto);
-        return categoryRepository.save(category);
+        try {
+            category = categoryRepository.save(category);
+        } catch (DataIntegrityViolationException div) {
+            throw new DuplicateCategoryNameException();
+        }
+
+        return category;
     }
 
     @Override
-    public Category updateCategory(Long id, CategoryDto dto) throws CategoryNotFoundException {
+    public Category updateCategory(Long id, CategoryDto dto) throws CategoryNotFoundException, DuplicateCategoryNameException {
         Category category = categoryRepository.findOne(id);
+
         if (category == null) {
             throw new CategoryNotFoundException(id);
         }
+
         CategoryMapper.copyFromDto(category, dto);
 
         return categoryRepository.save(category);
