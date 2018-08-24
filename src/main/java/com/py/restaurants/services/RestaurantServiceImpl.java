@@ -28,7 +28,8 @@ import java.util.stream.StreamSupport;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private static final int DEFAULT_PAGE = 0;
-    private static final int DEFAULT_PAGE_SIZE = 2;
+    private static final int DEFAULT_PAGE_SIZE = 100;
+
     private RestaurantRepository restaurantRepository;
     private CategoryRepository categoryRepository;
 
