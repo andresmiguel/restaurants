@@ -4,6 +4,7 @@ import com.py.restaurants.domain.Category;
 import com.py.restaurants.domain.Restaurant;
 import com.py.restaurants.dto.CategoryDto;
 import com.py.restaurants.dto.RestaurantDto;
+import com.py.restaurants.dto.SearchRestaurantDto;
 import com.py.restaurants.exceptions.CategoryNotFoundException;
 import com.py.restaurants.exceptions.DuplicateCategoryNameException;
 import com.py.restaurants.exceptions.DuplicateRestaurantNameException;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
 
 public interface RestaurantService {
     Restaurant get(Long id) throws RestaurantNotFoundException;
-    Stream<Restaurant> getAll();
+    Stream<Restaurant> getAll(SearchRestaurantDto searchRestaurantDto);
     Stream<Restaurant> getAllWithSimilarName(String namePart);
     Stream<Restaurant> getByCategory(Long categoryId);
     Restaurant add(RestaurantDto dto) throws DuplicateRestaurantNameException;

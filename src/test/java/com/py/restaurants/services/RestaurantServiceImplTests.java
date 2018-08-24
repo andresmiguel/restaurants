@@ -1,6 +1,7 @@
 package com.py.restaurants.services;
 
 import com.py.restaurants.domain.Restaurant;
+import com.py.restaurants.dto.SearchRestaurantDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,9 +39,34 @@ public class RestaurantServiceImplTests {
         restaurantList.add(Restaurant.builder()
                 .name("r2")
                 .build());
+
         Mockito.when(restaurantRepository.findByDeletedFalse())
                 .thenReturn(restaurantList);
-        List<Restaurant> returnedList = restaurantService.getAll().collect(Collectors.toList());
+
+        SearchRestaurantDto searchRestaurantDto = new SearchRestaurantDto();
+        List<Restaurant> returnedList = restaurantService.getAll(searchRestaurantDto).collect(Collectors.toList());
+
+        assertThat(returnedList.size()).isEqualTo(restaurantList.size());
+        assertThat(returnedList.get(0).getName()).isEqualTo(restaurantList.get(0).getName());
+    }
+
+    @Test
+    public void shouldGetAllReturnFilteredStreamWhenPassedCategoryId() {
+
+        List<Restaurant> restaurantList = new ArrayList<>();
+        restaurantList.add(Restaurant.builder()
+                .name("r1")
+                .build());
+        restaurantList.add(Restaurant.builder()
+                .name("r2")
+                .build());
+
+        Mockito.when(restaurantRepository.findByCategoriesIdAndDeletedFalse(1L))
+                .thenReturn(restaurantList);
+
+        SearchRestaurantDto searchRestaurantDto = new SearchRestaurantDto();
+        searchRestaurantDto.categoryId = 1L;
+        List<Restaurant> returnedList = restaurantService.getAll(searchRestaurantDto).collect(Collectors.toList());
 
         assertThat(returnedList.size()).isEqualTo(restaurantList.size());
         assertThat(returnedList.get(0).getName()).isEqualTo(restaurantList.get(0).getName());

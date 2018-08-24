@@ -4,6 +4,7 @@ import com.py.restaurants.domain.Category;
 import com.py.restaurants.domain.Restaurant;
 import com.py.restaurants.dto.CategoryDto;
 import com.py.restaurants.dto.RestaurantDto;
+import com.py.restaurants.dto.SearchRestaurantDto;
 import com.py.restaurants.dto.mappers.CategoryMapper;
 import com.py.restaurants.dto.mappers.RestaurantMapper;
 import com.py.restaurants.exceptions.CategoryNotFoundException;
@@ -14,8 +15,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,8 +46,15 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Stream<Restaurant> getAll() {
-        return StreamSupport.stream(restaurantRepository.findByDeletedFalse().spliterator(),false);
+    public Stream<Restaurant> getAll(SearchRestaurantDto searchRestaurantDto) {
+        List<Restaurant> restaurants;
+        if (searchRestaurantDto.categoryId != null) {
+            restaurants = restaurantRepository.findByCategoriesIdAndDeletedFalse(searchRestaurantDto.categoryId);
+        } else {
+            restaurants = restaurantRepository.findByDeletedFalse();
+        }
+
+        return StreamSupport.stream(restaurants.spliterator(),false);
     }
 
     @Override

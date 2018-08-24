@@ -3,6 +3,7 @@ package com.py.restaurants.rest;
 import com.py.restaurants.domain.Category;
 import com.py.restaurants.dto.CategoryDto;
 import com.py.restaurants.dto.RestaurantDto;
+import com.py.restaurants.dto.SearchRestaurantDto;
 import com.py.restaurants.dto.mappers.CategoryMapper;
 import com.py.restaurants.dto.mappers.RestaurantMapper;
 import com.py.restaurants.exceptions.CategoryNotFoundException;
@@ -27,8 +28,8 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public List<RestaurantDto> getAllRestaurants() {
-        return restaurantService.getAll()
+    public List<RestaurantDto> getAllRestaurants(SearchRestaurantDto searchRestaurantDto) {
+        return restaurantService.getAll(searchRestaurantDto)
                 .map(RestaurantMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -43,12 +44,12 @@ public class RestaurantController {
         return RestaurantMapper.toDto(restaurantService.add(dto));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public RestaurantDto updateRestaurant(@PathVariable Long id, @Valid @RequestBody RestaurantDto dto) throws RestaurantNotFoundException {
         return RestaurantMapper.toDto(restaurantService.update(id, dto));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public void deleteRestaurant(@PathVariable Long id) throws RestaurantNotFoundException {
         restaurantService.delete(id);
     }
