@@ -2,8 +2,6 @@ package com.py.restaurants.services;
 
 import com.py.restaurants.domain.Category;
 import com.py.restaurants.domain.Restaurant;
-import com.py.restaurants.services.CategoryRepository;
-import com.py.restaurants.services.RestaurantRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,20 +29,39 @@ public class RestaurantRepositoryTests {
     private CategoryRepository categoryRepository;
 
     @Test
-    public void shouldFindByNameContainingReturnOnlyOneRestaurant() {
+    public void shouldFindByDeletedFalseReturnOnlyOneRestaurant() {
         Restaurant restaurant1 = Restaurant.builder().name("My restaurant").build();
         Restaurant restaurant2 = Restaurant.builder().name("You are not gonna find me").build();
+        Restaurant restaurant3 = Restaurant.builder().name("rest but deleted").build();
+        restaurant3.setDeleted(true);
 
         testEntityManager.persist(restaurant1);
         testEntityManager.persist(restaurant2);
+        testEntityManager.persist(restaurant3);
         testEntityManager.flush();
 
-        List<Restaurant> restaurants = restaurantRepository.findByNameContaining("rest");
+        List<Restaurant> restaurants = restaurantRepository.findByDeletedFalse();
+        assertThat(restaurants.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void shouldFindByNameContainingAndDeletedFalseReturnOnlyOneRestaurant() {
+        Restaurant restaurant1 = Restaurant.builder().name("My restaurant").build();
+        Restaurant restaurant2 = Restaurant.builder().name("You are not gonna find me").build();
+        Restaurant restaurant3 = Restaurant.builder().name("rest but deleted").build();
+        restaurant3.setDeleted(true);
+
+        testEntityManager.persist(restaurant1);
+        testEntityManager.persist(restaurant2);
+        testEntityManager.persist(restaurant3);
+        testEntityManager.flush();
+
+        List<Restaurant> restaurants = restaurantRepository.findByNameContainingAndDeletedFalse("rest");
         assertThat(restaurants.size()).isEqualTo(1);
     }
 
     @Test
-    public void shouldFindByCategoriesIdReturnOnlyOneRestaurant() {
+    public void shouldFindByCategoriesIdAndDeletedFalseReturnOnlyOneRestaurant() {
         Category category1 = new Category("Cat1");
         Category category2 = new Category("Cat2");
         Category category3 = new Category("Cat3");
@@ -69,12 +86,19 @@ public class RestaurantRepositoryTests {
                 .build();
         restaurant3.getCategories().addAll(new HashSet<>(Arrays.asList(category3)));
 
+        Restaurant restaurant4 = Restaurant.builder()
+                .name("Yet another one deleted")
+                .build();
+        restaurant4.setDeleted(true);
+        restaurant4.getCategories().addAll(new HashSet<>(Arrays.asList(category1)));
+
         testEntityManager.persist(restaurant1);
         testEntityManager.persist(restaurant2);
         testEntityManager.persist(restaurant3);
+        testEntityManager.persist(restaurant4);
         testEntityManager.flush();
 
-        List<Restaurant> restaurants = restaurantRepository.findByCategoriesId(category1.getId());
+        List<Restaurant> restaurants = restaurantRepository.findByCategoriesIdAndDeletedFalse(category1.getId());
 
         assertThat(restaurants.size()).isEqualTo(2);
 

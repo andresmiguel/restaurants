@@ -38,7 +38,7 @@ public class RestaurantServiceImplTests {
         restaurantList.add(Restaurant.builder()
                 .name("r2")
                 .build());
-        Mockito.when(restaurantRepository.findAll())
+        Mockito.when(restaurantRepository.findByDeletedFalse())
                 .thenReturn(restaurantList);
         List<Restaurant> returnedList = restaurantService.getAll().collect(Collectors.toList());
 

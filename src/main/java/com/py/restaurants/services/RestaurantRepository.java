@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface RestaurantRepository extends PagingAndSortingRepository<Restaurant, Long> {
 
-    List<Restaurant> findByNameContaining(String namePart);
-    List<Restaurant> findByCategoriesId(Long id);
+    List<Restaurant> findByNameContainingAndDeletedFalse(String namePart);
+    List<Restaurant> findByCategoriesIdAndDeletedFalse(Long id);
+    List<Restaurant> findByDeletedFalse();
 }

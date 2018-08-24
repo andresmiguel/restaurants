@@ -26,6 +26,7 @@ public class Restaurant {
     private double longitude;
     @OneToOne(cascade = CascadeType.ALL)
     private Schedule schedule;
+    private boolean deleted;
     @ManyToMany
     private Set<Category> categories = new HashSet<>();
 

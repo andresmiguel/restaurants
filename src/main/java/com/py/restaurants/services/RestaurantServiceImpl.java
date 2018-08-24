@@ -37,7 +37,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Restaurant get(Long id) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findOne(id);
 
-        if (restaurant == null) {
+        if (restaurant == null || restaurant.isDeleted()) {
             throw new RestaurantNotFoundException(id);
         }
 
@@ -46,20 +46,20 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Stream<Restaurant> getAll() {
-        return StreamSupport.stream(restaurantRepository.findAll().spliterator(),false);
+        return StreamSupport.stream(restaurantRepository.findByDeletedFalse().spliterator(),false);
     }
 
     @Override
     public Stream<Restaurant> getAllWithSimilarName(String namePart) {
         return StreamSupport.stream(
-                restaurantRepository.findByNameContaining(namePart).spliterator(),
+                restaurantRepository.findByNameContainingAndDeletedFalse(namePart).spliterator(),
                 false);
     }
 
     @Override
     public Stream<Restaurant> getByCategory(Long categoryId) {
         return StreamSupport.stream(
-                restaurantRepository.findByCategoriesId(categoryId).spliterator(),
+                restaurantRepository.findByCategoriesIdAndDeletedFalse(categoryId).spliterator(),
                 false);
     }
 
@@ -104,11 +104,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void delete(Long id) throws RestaurantNotFoundException {
-        try {
-            restaurantRepository.delete(id);
-        } catch (EmptyResultDataAccessException erda) {
+        Restaurant restaurant = restaurantRepository.findOne(id);
+
+        if (restaurant == null) {
             throw new RestaurantNotFoundException(id);
         }
+
+        restaurant.setDeleted(true);
+        restaurantRepository.save(restaurant);
     }
 
     @Override
