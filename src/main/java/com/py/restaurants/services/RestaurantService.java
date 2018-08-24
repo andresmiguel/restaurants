@@ -16,7 +16,6 @@ public interface RestaurantService {
     Restaurant get(Long id) throws RestaurantNotFoundException;
     Stream<Restaurant> getAll(SearchRestaurantDto searchRestaurantDto);
     Stream<Restaurant> getAllWithSimilarName(String namePart);
-    Stream<Restaurant> getByCategory(Long categoryId);
     Restaurant add(RestaurantDto dto) throws DuplicateRestaurantNameException;
     Restaurant update(Long id, RestaurantDto dto) throws RestaurantNotFoundException;
     void delete(Long id) throws RestaurantNotFoundException;

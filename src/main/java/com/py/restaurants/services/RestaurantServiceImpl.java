@@ -13,6 +13,8 @@ import com.py.restaurants.exceptions.DuplicateRestaurantNameException;
 import com.py.restaurants.exceptions.RestaurantNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,8 @@ import java.util.stream.StreamSupport;
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
 
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 2;
     private RestaurantRepository restaurantRepository;
     private CategoryRepository categoryRepository;
 
@@ -47,27 +51,30 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Stream<Restaurant> getAll(SearchRestaurantDto searchRestaurantDto) {
+        Pageable pageable = buildPageRequest(searchRestaurantDto);
+
         List<Restaurant> restaurants;
         if (searchRestaurantDto.categoryId != null) {
-            restaurants = restaurantRepository.findByCategoriesIdAndDeletedFalse(searchRestaurantDto.categoryId);
+            restaurants = restaurantRepository.findByCategoriesIdAndDeletedFalse(searchRestaurantDto.categoryId, pageable);
         } else {
-            restaurants = restaurantRepository.findByDeletedFalse();
+
+            restaurants = restaurantRepository.findByDeletedFalse(pageable);
         }
 
         return StreamSupport.stream(restaurants.spliterator(),false);
+    }
+
+    private Pageable buildPageRequest(SearchRestaurantDto searchRestaurantDto) {
+        int page = searchRestaurantDto.page != null ? searchRestaurantDto.page : DEFAULT_PAGE;
+        int pageSize = searchRestaurantDto.pageSize != null ? searchRestaurantDto.pageSize : DEFAULT_PAGE_SIZE;
+
+        return new PageRequest(page, pageSize);
     }
 
     @Override
     public Stream<Restaurant> getAllWithSimilarName(String namePart) {
         return StreamSupport.stream(
                 restaurantRepository.findByNameContainingAndDeletedFalse(namePart).spliterator(),
-                false);
-    }
-
-    @Override
-    public Stream<Restaurant> getByCategory(Long categoryId) {
-        return StreamSupport.stream(
-                restaurantRepository.findByCategoriesIdAndDeletedFalse(categoryId).spliterator(),
                 false);
     }
 

@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -40,10 +41,12 @@ public class RestaurantServiceImplTests {
                 .name("r2")
                 .build());
 
-        Mockito.when(restaurantRepository.findByDeletedFalse())
+        Mockito.when(restaurantRepository.findByDeletedFalse(new PageRequest(0, 10)))
                 .thenReturn(restaurantList);
 
         SearchRestaurantDto searchRestaurantDto = new SearchRestaurantDto();
+        searchRestaurantDto.page = 0;
+        searchRestaurantDto.pageSize = 10;
         List<Restaurant> returnedList = restaurantService.getAll(searchRestaurantDto).collect(Collectors.toList());
 
         assertThat(returnedList.size()).isEqualTo(restaurantList.size());
@@ -61,11 +64,13 @@ public class RestaurantServiceImplTests {
                 .name("r2")
                 .build());
 
-        Mockito.when(restaurantRepository.findByCategoriesIdAndDeletedFalse(1L))
+        Mockito.when(restaurantRepository.findByCategoriesIdAndDeletedFalse(1L, new PageRequest(0, 10)))
                 .thenReturn(restaurantList);
 
         SearchRestaurantDto searchRestaurantDto = new SearchRestaurantDto();
         searchRestaurantDto.categoryId = 1L;
+        searchRestaurantDto.page = 0;
+        searchRestaurantDto.pageSize = 10;
         List<Restaurant> returnedList = restaurantService.getAll(searchRestaurantDto).collect(Collectors.toList());
 
         assertThat(returnedList.size()).isEqualTo(restaurantList.size());

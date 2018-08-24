@@ -7,4 +7,6 @@ import lombok.Setter;
 @Setter
 public class SearchRestaurantDto {
     public Long categoryId;
+    public Integer page;
+    public Integer pageSize;
 }

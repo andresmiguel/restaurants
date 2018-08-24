@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
@@ -40,7 +41,7 @@ public class RestaurantRepositoryTests {
         testEntityManager.persist(restaurant3);
         testEntityManager.flush();
 
-        List<Restaurant> restaurants = restaurantRepository.findByDeletedFalse();
+        List<Restaurant> restaurants = restaurantRepository.findByDeletedFalse(new PageRequest(0, 10));
         assertThat(restaurants.size()).isEqualTo(2);
     }
 
@@ -98,7 +99,7 @@ public class RestaurantRepositoryTests {
         testEntityManager.persist(restaurant4);
         testEntityManager.flush();
 
-        List<Restaurant> restaurants = restaurantRepository.findByCategoriesIdAndDeletedFalse(category1.getId());
+        List<Restaurant> restaurants = restaurantRepository.findByCategoriesIdAndDeletedFalse(category1.getId(), new PageRequest(0, 10));
 
         assertThat(restaurants.size()).isEqualTo(2);
 
