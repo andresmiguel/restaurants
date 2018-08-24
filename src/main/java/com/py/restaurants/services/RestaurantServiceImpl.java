@@ -3,14 +3,12 @@ package com.py.restaurants.services;
 import com.py.restaurants.domain.Category;
 import com.py.restaurants.domain.Restaurant;
 import com.py.restaurants.dto.CategoryDto;
+import com.py.restaurants.dto.PageableSearchRestaurantDto;
 import com.py.restaurants.dto.RestaurantDto;
 import com.py.restaurants.dto.SearchRestaurantDto;
 import com.py.restaurants.dto.mappers.CategoryMapper;
 import com.py.restaurants.dto.mappers.RestaurantMapper;
-import com.py.restaurants.exceptions.CategoryNotFoundException;
-import com.py.restaurants.exceptions.DuplicateCategoryNameException;
-import com.py.restaurants.exceptions.DuplicateRestaurantNameException;
-import com.py.restaurants.exceptions.RestaurantNotFoundException;
+import com.py.restaurants.exceptions.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +20,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -51,32 +48,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Stream<Restaurant> getAll(SearchRestaurantDto searchRestaurantDto) {
-        Pageable pageable = buildPageRequest(searchRestaurantDto);
-
-        List<Restaurant> restaurants;
-        if (searchRestaurantDto.categoryId != null) {
-            restaurants = restaurantRepository.findByCategoriesIdAndDeletedFalse(searchRestaurantDto.categoryId, pageable);
-        } else {
-
-            restaurants = restaurantRepository.findByDeletedFalse(pageable);
-        }
-
-        return StreamSupport.stream(restaurants.spliterator(),false);
+    public Stream<Restaurant> getAll(PageableSearchRestaurantDto pageableSearchRestaurantDto) {
+        Pageable pageable = buildPageRequest(pageableSearchRestaurantDto);
+        List<Restaurant> restaurants = restaurantRepository.findByDeletedFalse(pageable);
+        return restaurants.stream();
     }
 
-    private Pageable buildPageRequest(SearchRestaurantDto searchRestaurantDto) {
+    private Pageable buildPageRequest(PageableSearchRestaurantDto searchRestaurantDto) {
         int page = searchRestaurantDto.page != null ? searchRestaurantDto.page : DEFAULT_PAGE;
         int pageSize = searchRestaurantDto.pageSize != null ? searchRestaurantDto.pageSize : DEFAULT_PAGE_SIZE;
 
         return new PageRequest(page, pageSize);
-    }
-
-    @Override
-    public Stream<Restaurant> getAllWithSimilarName(String namePart) {
-        return StreamSupport.stream(
-                restaurantRepository.findByNameContainingAndDeletedFalse(namePart).spliterator(),
-                false);
     }
 
     @Override
@@ -143,9 +125,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Stream<Category> getAllCategories() {
-        return StreamSupport.stream(
-                categoryRepository.findAll().spliterator(),
-                false);
+        return categoryRepository.findAll().stream();
     }
 
     @Override
@@ -181,5 +161,32 @@ public class RestaurantServiceImpl implements RestaurantService {
         } catch (EmptyResultDataAccessException erda) {
             throw new CategoryNotFoundException(id);
         }
+    }
+
+    @Override
+    public Stream<Restaurant> search(SearchRestaurantDto searchRestaurantDto) throws RestaurantSearchException {
+        Pageable pageable = buildPageRequest(searchRestaurantDto);
+        List<Restaurant> restaurants;
+
+        if (searchRestaurantDto.categoryId != null && searchRestaurantDto.namePart != null) {
+            restaurants = restaurantRepository.findByCategoriesIdAndNameContainingAndDeletedFalse(
+                    searchRestaurantDto.categoryId,
+                    searchRestaurantDto.namePart,
+                    pageable
+            );
+        } else if (searchRestaurantDto.categoryId != null) {
+            restaurants = restaurantRepository.findByCategoriesIdAndDeletedFalse(
+                    searchRestaurantDto.categoryId,
+                    pageable);
+        } else if (searchRestaurantDto.namePart != null) {
+            restaurants = restaurantRepository.findByNameContainingAndDeletedFalse(
+                    searchRestaurantDto.namePart,
+                    pageable
+            );
+        } else {
+            throw new RestaurantSearchException();
+        }
+
+        return restaurants.stream();
     }
 }

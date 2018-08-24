@@ -2,14 +2,12 @@ package com.py.restaurants.rest;
 
 import com.py.restaurants.domain.Category;
 import com.py.restaurants.dto.CategoryDto;
+import com.py.restaurants.dto.PageableSearchRestaurantDto;
 import com.py.restaurants.dto.RestaurantDto;
 import com.py.restaurants.dto.SearchRestaurantDto;
 import com.py.restaurants.dto.mappers.CategoryMapper;
 import com.py.restaurants.dto.mappers.RestaurantMapper;
-import com.py.restaurants.exceptions.CategoryNotFoundException;
-import com.py.restaurants.exceptions.DuplicateCategoryNameException;
-import com.py.restaurants.exceptions.DuplicateRestaurantNameException;
-import com.py.restaurants.exceptions.RestaurantNotFoundException;
+import com.py.restaurants.exceptions.*;
 import com.py.restaurants.services.RestaurantService;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +26,15 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public List<RestaurantDto> getAllRestaurants(SearchRestaurantDto searchRestaurantDto) {
-        return restaurantService.getAll(searchRestaurantDto)
+    public List<RestaurantDto> getAllRestaurants(PageableSearchRestaurantDto pageableSearchRestaurantDto) {
+        return restaurantService.getAll(pageableSearchRestaurantDto)
+                .map(RestaurantMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/search")
+    public List<RestaurantDto> search(SearchRestaurantDto searchRestaurantDto) throws RestaurantSearchException {
+        return restaurantService.search(searchRestaurantDto)
                 .map(RestaurantMapper::toDto)
                 .collect(Collectors.toList());
     }

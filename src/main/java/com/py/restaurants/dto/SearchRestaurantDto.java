@@ -1,12 +1,13 @@
 package com.py.restaurants.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-public class SearchRestaurantDto {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class SearchRestaurantDto extends PageableSearchRestaurantDto {
     public Long categoryId;
-    public Integer page;
-    public Integer pageSize;
+    public String namePart;
 }

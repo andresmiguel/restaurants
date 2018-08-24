@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface RestaurantRepository extends PagingAndSortingRepository<Restaurant, Long> {
 
-    List<Restaurant> findByNameContainingAndDeletedFalse(String namePart);
-    List<Restaurant> findByCategoriesIdAndDeletedFalse(Long id, Pageable pageable);
+    List<Restaurant> findByNameContainingAndDeletedFalse(String namePart, Pageable pageable);
+    List<Restaurant> findByCategoriesIdAndDeletedFalse(Long categoryId, Pageable pageable);
     List<Restaurant> findByDeletedFalse(Pageable pageable);
+    List<Restaurant> findByCategoriesIdAndNameContainingAndDeletedFalse(Long id, String namePart, Pageable pageable);
 }
