@@ -33,7 +33,7 @@ public class RestaurantRepositoryTests {
     @Test
     public void shouldFindByDeletedFalseReturnValidRestaurantList() {
         Restaurant restaurant1 = Restaurant.builder().name("My restaurant").build();
-        Restaurant restaurant2 = Restaurant.builder().name("You are not gonna find me").build();
+        Restaurant restaurant2 = Restaurant.builder().name("You are not gonna findByCountryAndLocation me").build();
         Restaurant restaurant3 = Restaurant.builder().name("rest but deleted").build();
         restaurant3.setDeleted(true);
 
@@ -49,7 +49,7 @@ public class RestaurantRepositoryTests {
     @Test
     public void shouldFindByNameContainingAndDeletedFalseReturnValidRestaurantList() {
         Restaurant restaurant1 = Restaurant.builder().name("My restaurant").build();
-        Restaurant restaurant2 = Restaurant.builder().name("You are not gonna find me").build();
+        Restaurant restaurant2 = Restaurant.builder().name("You are not gonna findByCountryAndLocation me").build();
         Restaurant restaurant3 = Restaurant.builder().name("rest but deleted").build();
         restaurant3.setDeleted(true);
 

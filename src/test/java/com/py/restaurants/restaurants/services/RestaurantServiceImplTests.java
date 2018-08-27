@@ -1,5 +1,6 @@
 package com.py.restaurants.restaurants.services;
 
+import com.py.restaurants.pedidosya.api.PyRestaurantService;
 import com.py.restaurants.restaurants.domain.Restaurant;
 import com.py.restaurants.restaurants.dto.PageableSearchRestaurantDto;
 import com.py.restaurants.restaurants.dto.SearchRestaurantDto;
@@ -26,10 +27,15 @@ public class RestaurantServiceImplTests {
     private RestaurantRepository restaurantRepository;
     @Mock
     private CategoryRepository categoryRepository;
+    @Mock
+    private PyRestaurantService pyRestaurantService;
 
     @Before
     public void init() {
-        restaurantService = new RestaurantServiceImpl(restaurantRepository, categoryRepository);
+        restaurantService = new RestaurantServiceImpl(
+                restaurantRepository,
+                categoryRepository,
+                pyRestaurantService);
     }
 
     @Test

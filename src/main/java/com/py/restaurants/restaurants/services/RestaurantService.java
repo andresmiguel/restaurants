@@ -2,12 +2,10 @@ package com.py.restaurants.restaurants.services;
 
 import com.py.restaurants.restaurants.domain.Category;
 import com.py.restaurants.restaurants.domain.Restaurant;
-import com.py.restaurants.restaurants.dto.CategoryDto;
-import com.py.restaurants.restaurants.dto.PageableSearchRestaurantDto;
-import com.py.restaurants.restaurants.dto.RestaurantDto;
-import com.py.restaurants.restaurants.dto.SearchRestaurantDto;
+import com.py.restaurants.restaurants.dto.*;
 import com.py.restaurants.restaurants.exceptions.*;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public interface RestaurantService {
@@ -17,6 +15,7 @@ public interface RestaurantService {
     Restaurant update(Long id, RestaurantDto dto) throws RestaurantNotFoundException;
     void delete(Long id) throws RestaurantNotFoundException;
     Stream<Restaurant> search(SearchRestaurantDto searchRestaurantDto) throws RestaurantSearchException;
+    List<CompetitorDto> findCompetitors(Long id) throws RestaurantNotFoundException, ExternalServiceException;
 
     Category getCategory(Long id) throws CategoryNotFoundException;
     Stream<Category> getAllCategories();

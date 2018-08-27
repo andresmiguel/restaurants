@@ -1,6 +1,7 @@
 package com.py.restaurants.restaurants.domain;
 
 import lombok.*;
+import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -39,5 +40,9 @@ public class Restaurant {
         this.latitude = latitude;
         this.longitude = longitude;
         this.schedule = schedule;
+    }
+
+    public Point getLocation() {
+        return new Point(longitude, latitude);
     }
 }

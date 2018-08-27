@@ -9,6 +9,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class RestaurantsApplicationTests {
 
+	static {
+		System.setProperty("PY_CLIENT_ID", "PY_CLIENT_ID");
+		System.setProperty("PY_CLIENT_SECRET", "PY_CLIENT_SECRET");
+	}
+
 	@Test
 	public void contextLoads() {
 	}

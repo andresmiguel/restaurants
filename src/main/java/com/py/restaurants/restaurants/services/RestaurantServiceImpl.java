@@ -1,11 +1,11 @@
 package com.py.restaurants.restaurants.services;
 
+import com.py.restaurants.pedidosya.api.PyRestaurant;
+import com.py.restaurants.pedidosya.api.PyRestaurantService;
+import com.py.restaurants.pedidosya.exceptions.PyRestaurantsApiException;
 import com.py.restaurants.restaurants.domain.Category;
 import com.py.restaurants.restaurants.domain.Restaurant;
-import com.py.restaurants.restaurants.dto.CategoryDto;
-import com.py.restaurants.restaurants.dto.PageableSearchRestaurantDto;
-import com.py.restaurants.restaurants.dto.RestaurantDto;
-import com.py.restaurants.restaurants.dto.SearchRestaurantDto;
+import com.py.restaurants.restaurants.dto.*;
 import com.py.restaurants.restaurants.dto.mappers.CategoryMapper;
 import com.py.restaurants.restaurants.dto.mappers.RestaurantMapper;
 import com.py.restaurants.restaurants.exceptions.*;
@@ -15,9 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,14 +24,19 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     private static final int DEFAULT_PAGE = 0;
     private static final int DEFAULT_PAGE_SIZE = 100;
+    private static final int COUNTRY = 1; // Uruguay
 
     private RestaurantRepository restaurantRepository;
     private CategoryRepository categoryRepository;
+    private PyRestaurantService pyRestaurantService;
+
 
     public RestaurantServiceImpl(RestaurantRepository restaurantRepository,
-                                 CategoryRepository categoryRepository) {
+                                 CategoryRepository categoryRepository,
+                                 PyRestaurantService pyRestaurantService) {
         this.restaurantRepository = restaurantRepository;
         this.categoryRepository = categoryRepository;
+        this.pyRestaurantService = pyRestaurantService;
     }
 
     @Override
@@ -188,5 +191,39 @@ public class RestaurantServiceImpl implements RestaurantService {
         }
 
         return restaurants.stream();
+    }
+
+    @Override
+    public List<CompetitorDto> findCompetitors(Long id) throws RestaurantNotFoundException, ExternalServiceException {
+        Restaurant restaurant = this.get(id);
+        List<CompetitorDto> competitorDtos = new ArrayList<>();
+
+        try {
+            List<PyRestaurant> competitors = this.pyRestaurantService.findByCountryAndLocation(COUNTRY, restaurant.getLocation());
+
+            for (PyRestaurant pyRestaurant : competitors) {
+                Set<String> pyCategories = getCommonCategories(restaurant, pyRestaurant);
+
+                if (!pyCategories.isEmpty()) {
+                    CompetitorDto competitorDto = CompetitorDto.builder()
+                            .name(pyRestaurant.getName())
+                            .commonCategories(pyCategories)
+                            .build();
+                    competitorDtos.add(competitorDto);
+                }
+            }
+        } catch (PyRestaurantsApiException e) {
+            throw new ExternalServiceException(e.getMessage());
+        }
+
+        return competitorDtos;
+    }
+
+    private Set<String> getCommonCategories(Restaurant restaurant, PyRestaurant pyRestaurant) {
+
+        return restaurant.getCategories().stream()
+                .map(Category::getName)
+                .filter(pyRestaurant.getCategories()::contains)
+                .collect(Collectors.toSet());
     }
 }

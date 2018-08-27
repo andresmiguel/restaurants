@@ -1,10 +1,7 @@
 package com.py.restaurants.restaurants.rest;
 
 import com.py.restaurants.restaurants.domain.Category;
-import com.py.restaurants.restaurants.dto.CategoryDto;
-import com.py.restaurants.restaurants.dto.PageableSearchRestaurantDto;
-import com.py.restaurants.restaurants.dto.RestaurantDto;
-import com.py.restaurants.restaurants.dto.SearchRestaurantDto;
+import com.py.restaurants.restaurants.dto.*;
 import com.py.restaurants.restaurants.dto.mappers.CategoryMapper;
 import com.py.restaurants.restaurants.dto.mappers.RestaurantMapper;
 import com.py.restaurants.restaurants.exceptions.*;
@@ -87,4 +84,10 @@ public class RestaurantController {
     public void deleteCategory(@PathVariable Long id) throws CategoryNotFoundException {
         restaurantService.deleteCategory(id);
     }
+
+    @GetMapping("/{id}/competitors")
+    public List<CompetitorDto> getCompetitors(@PathVariable Long id) throws RestaurantNotFoundException, ExternalServiceException {
+        return restaurantService.findCompetitors(id);
+    }
+
 }
